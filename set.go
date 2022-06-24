@@ -104,3 +104,15 @@ func (se Set[E]) Elements() []E {
 	}
 	return rv
 }
+
+// Copy creates a copy of the set.  If the resulting set is empty a nil set is
+// returned.
+func (se Set[E]) Copy() (rv Set[E]) {
+	if n := len(se); n != 0 {
+		rv = make(Set[E], n)
+		for e := range se {
+			rv[e] = struct{}{}
+		}
+	}
+	return rv
+}

@@ -105,6 +105,28 @@ func TestStringSet(t *testing.T) {
 		t.Errorf("equal true but %v ≠ %v", st, ss)
 	}
 
+	sc := ss.Copy()
+	if v := len(sc); v != len(ss) {
+		t.Errorf("copy wrong size: %d", v)
+	}
+	if !ss.IsSubsetOf(sc) {
+		t.Error("subset of equal wrong")
+	}
+	if !ss.IsEqual(sc) {
+		t.Error("equal wrong")
+	}
+	sc.Remove("a", "b")
+	if v := len(sc); v != len(ss)-2 {
+		t.Errorf("copy affects original")
+	}
+	if sc.Copy() != nil {
+		t.Errorf("copy empty not nil")
+	}
+	sc = nil
+	if sc.Copy() != nil {
+		t.Errorf("copy nil not nil")
+	}
+
 	sm := ss.Minus(nil)
 	if len(sm) != len(ss) {
 		t.Errorf("set minus nil wrong len: %d", len(sm))
