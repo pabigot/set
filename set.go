@@ -117,6 +117,20 @@ func (se Set[E]) Copy() (rv Set[E]) {
 	return rv
 }
 
+// Union returns the set of all elements that are in either the receiver and
+// sr.  If the resulting set is empty a nil set is returned.
+func (sl Set[E]) Union(sr Set[E]) (rv Set[E]) {
+	if len(sl) != 0 {
+		rv = sl.Copy()
+		for e := range sr {
+			rv = rv.Add(e)
+		}
+	} else if len(sr) != 0 {
+		rv = sr
+	}
+	return rv
+}
+
 // Intersect returns the set of all elements that are in both the receiver and
 // sr.  If the resulting set is empty a nil set is returned.
 func (sl Set[E]) Intersect(sr Set[E]) (rv Set[E]) {

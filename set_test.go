@@ -154,6 +154,28 @@ func TestStringSet(t *testing.T) {
 		t.Error("elements wrong result")
 	}
 
+	if st := nilSet.Union(emptySet); st != nil {
+		t.Error("nil union empty not nil")
+	}
+	if st := emptySet.Union(nilSet); st != nil {
+		t.Error("empty union nil not nil")
+	}
+	if st := nilSet.Union(sb); !st.IsEqual(sb) {
+		t.Errorf("nil union receiver wrong: %v", st)
+	}
+	if st := emptySet.Union(sb); !st.IsEqual(sb) {
+		t.Errorf("empty union receiver wrong: %v", st)
+	}
+	if st := sb.Union(nilSet); !st.IsEqual(sb) {
+		t.Errorf("nil union arg wrong: %v", st)
+	}
+	if st := sb.Union(emptySet); !st.IsEqual(sb) {
+		t.Errorf("empty union arg wrong: %v", st)
+	}
+	if st := sa.Union(sb); !st.IsEqual(ss) {
+		t.Errorf("Union wrong: %v", st)
+	}
+
 	st := Set[string](nil).Add("b", "c")
 	st = ss.Intersect(st)
 	sl = st.Elements()
