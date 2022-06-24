@@ -154,6 +154,21 @@ func TestStringSet(t *testing.T) {
 		t.Error("elements wrong result")
 	}
 
+	st := Set[string](nil).Add("b", "c")
+	st = ss.Intersect(st)
+	sl = st.Elements()
+	sort.Strings(sl)
+
+	if len(sl) != 1 || sl[0] != "b" {
+		t.Errorf("intersect %v %v wrong result: %v", ss.Elements(), sa.Elements(), sl)
+	}
+	if ss.Intersect(nil) != nil {
+		t.Error("non-nil when sr nil")
+	}
+	if Set[string](nil).Intersect(ss) != nil {
+		t.Error("non-nil when sl nil")
+	}
+
 	ss = ss.Remove("c")
 	if v := len(ss); v != 2 {
 		t.Errorf("remove absent changed len: %d", v)

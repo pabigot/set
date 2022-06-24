@@ -116,3 +116,16 @@ func (se Set[E]) Copy() (rv Set[E]) {
 	}
 	return rv
 }
+
+// Intersect returns the set of all elements that are in both the receiver and
+// sr.  If the resulting set is empty a nil set is returned.
+func (sl Set[E]) Intersect(sr Set[E]) (rv Set[E]) {
+	if sl != nil && sr != nil {
+		for e := range sl {
+			if sr.Has(e) {
+				rv = rv.Add(e)
+			}
+		}
+	}
+	return rv
+}
