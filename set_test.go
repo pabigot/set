@@ -9,18 +9,45 @@ import (
 )
 
 func TestStringSet(t *testing.T) {
+	var nilSet Set[string]
+	if nilSet != nil {
+		t.Error("nilSet is not nil")
+	}
+
+	emptySet := make(Set[string])
+	if len(emptySet) != 0 {
+		t.Error("emptySet not empty")
+	}
+	if !emptySet.IsEqual(nilSet) || !nilSet.IsEqual(emptySet) {
+		t.Error("equal on empty and nil set wrong")
+	}
+	if !emptySet.IsSubsetOf(nilSet) || !nilSet.IsSubsetOf(emptySet) {
+		t.Error("subset on empty and nil set wrong")
+	}
+
+	if nilSet.Has("a") {
+		t.Error("nilSet found value")
+	}
+	if emptySet.Has("a") {
+		t.Error("emptySet found value")
+	}
+
 	var ss Set[string]
 	var sl []string
-	if ss.Has("a") {
-		t.Error("nil Set found value")
-	}
 	if ss = MakeSet[string](); ss != nil {
-		t.Error("make from nil not nil")
+		t.Error("make from empty should be nil")
 	}
-	if ss = ss.Remove("b"); ss != nil {
-		t.Error("remove created non-nil set")
+	if ss = nilSet.Remove("b"); ss != nil {
+		t.Error("remove from nil should be nil")
 	}
+	if ss = emptySet.Remove("b"); ss == nil {
+		t.Error("remove from empty should not be nil")
+	}
+
 	// staticcheck says the compares are never true
+	//if emptySet == nil {
+	//	t.Error("emptySet is nil")
+	//}
 	// ss = Set[string]{}
 	// if ss == nil {
 	// 	t.Error("not expected")
@@ -41,6 +68,12 @@ func TestStringSet(t *testing.T) {
 	if !ss.Has("a") {
 		t.Error("set missing element")
 	}
+	if ss.IsEqual(nilSet) || ss.IsEqual(emptySet) {
+		t.Error("non-empty equals nil or empty")
+	}
+	if !nilSet.IsSubsetOf(ss) || !emptySet.IsSubsetOf(ss) {
+		t.Error("nil or empty is not subset of non-empty")
+	}
 
 	ss = ss.Add("b")
 	if v := len(ss); v != 2 {
@@ -49,6 +82,9 @@ func TestStringSet(t *testing.T) {
 	if !ss.Has("b") {
 		t.Error("set missing element")
 	}
+	if !ss.IsEqual(MakeSet[string]("a", "b")) {
+		t.Error("set not equal expected")
+	}
 
 	sa := Set[string]{}.Add("a")
 	if v := len(sa); v != 1 {
@@ -56,6 +92,17 @@ func TestStringSet(t *testing.T) {
 	}
 	if !sa.Has("a") {
 		t.Error("set missing element")
+	}
+	if !sa.IsSubsetOf(ss) {
+		t.Errorf("subSet false but %v ⊆ %v", sa, ss)
+	}
+	if ss.IsSubsetOf(sa) {
+		t.Errorf("subSet true but %v ⊈ %v", sa, ss)
+	}
+	if st := MakeSet[string]("c"); st.IsSubsetOf(ss) {
+		t.Errorf("subSet true but %v ⊈ %v", st, ss)
+	} else if st.IsEqual(sa) {
+		t.Errorf("equal true but %v ≠ %v", st, ss)
 	}
 
 	sm := ss.Minus(nil)

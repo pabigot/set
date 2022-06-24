@@ -64,6 +64,34 @@ func (sl Set[E]) Minus(sr Set[E]) Set[E] {
 	return rv
 }
 
+// IsSubsetOf returns true if and only if all the elements in the receiver are
+// in ss.
+func (sub Set[E]) IsSubsetOf(ss Set[E]) bool {
+	if len(sub) > len(ss) {
+		return false
+	}
+	for e := range sub {
+		if !ss.Has(e) {
+			return false
+		}
+	}
+	return true
+}
+
+// IsEqual returns true if and only if all the elements in the receiver are in
+// the argument and vice versa.
+func (sl Set[E]) IsEqual(sr Set[E]) bool {
+	if len(sl) != len(sr) {
+		return false
+	}
+	for e := range sl {
+		if !sr.Has(e) {
+			return false
+		}
+	}
+	return true
+}
+
 // Elements returns a slice of the members of the set, or nil if the set is
 // empty.  The order of elements in the slice is not specified.
 func (se Set[E]) Elements() []E {
